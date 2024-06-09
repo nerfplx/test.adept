@@ -1,0 +1,7 @@
+@import "styles/mixins";
+
+.column {
+  @include tableColumnWidthsByQty(4);
+
+  text-align: center;
+}
