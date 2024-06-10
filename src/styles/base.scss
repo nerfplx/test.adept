@@ -1,3 +1,5 @@
+@import "./vars";
+
 *, *::after, *::before {
   margin: 0;
   padding: 0;
@@ -24,5 +26,9 @@ input[type="checkbox"] {
 table {
   border-spacing: 0;
   border-collapse: collapse;
+}
+
+body {
+  background-color: $primaryBgColor;
 }
 

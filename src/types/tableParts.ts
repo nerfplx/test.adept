@@ -1,6 +1,6 @@
 export enum tableParts {
-    companies = 'companies',
-    workers = 'workers',
+    companies = "companies",
+    workers = "workers",
 }
 
-export type AvailableTools = Array<'add' | 'edit' | 'delete'>;
+export type AvailableTools = Array<"add" | "edit" | "delete">;

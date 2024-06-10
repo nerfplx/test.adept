@@ -1,12 +1,11 @@
-import React, {ReactNode, UIEvent} from 'react';
-import {useDispatch} from 'react-redux';
-import {Checkbox} from 'components/elements/checkbox'
-import {mergeClassNames} from 'utilsData';
-import {increaseViewRowsLimit} from 'store/tables/slice';
-import style from './style.module.scss';
-import {TableProps} from 'types/types';
+import React, {ReactNode, useRef} from "react";
+import {Checkbox} from "components/elements/checkbox";
+import {mergeClassNames} from "utilsData";
+import {useVirtualizer} from '@tanstack/react-virtual';
+import style from "./Table.module.scss";
+import {TableProps} from "types/types";
 
-export const Table = (props: TableProps & { children: ReactNode }) => {
+export const Table = (props: TableProps & { children: ReactNode[] }) => {
     const {
         type,
         children,
@@ -17,56 +16,77 @@ export const Table = (props: TableProps & { children: ReactNode }) => {
         selectAllRows,
         isFullSelected,
         setEditingTable,
-        getAvailableToolsRT
+        getAvailableToolsRT,
     } = props;
-
-    const dispatch = useDispatch();
 
     const availableTools = getAvailableToolsRT(type);
 
-    const getTableClasses = () =>
-        mergeClassNames(
-            style.table,
-            isHidden ? style.tableHidden : ''
-        );
-    const getToolStatus = (mode: 'edit' | 'delete' | 'add') => !availableTools.includes(mode) || isEditing;
+    const parentRef = useRef<HTMLDivElement>(null);
 
-    const scrollHandler = (e: UIEvent<HTMLDivElement>) => {
-        const scrollHeight = e.currentTarget.scrollHeight;
-        const currentScrollPosition = e.currentTarget.scrollTop;
-        const windowHeight = window.innerHeight;
-        if (scrollHeight - (currentScrollPosition + windowHeight) < 60) dispatch(increaseViewRowsLimit(10));
-    };
+    const rowVirtualizer = useVirtualizer({
+        count: children.length,
+        getScrollElement: () => parentRef.current,
+        estimateSize: () => 60,
+    });
+
+    const getTableClasses = () =>
+        mergeClassNames(style.table, isHidden ? style.tableHidden : "");
+    const getToolStatus = (mode: "edit" | "delete" | "add") =>
+        !availableTools.includes(mode) || isEditing;
 
     return (
-        <section className={getTableClasses()}>
-            <header className={style.header}>
+        <div className={getTableClasses()}>
+            <div className={style.header}>
                 <div className={style.checkbox}>
                     <Checkbox
                         isActive={isFullSelected}
-                        label={'Выделить все'}
+                        label={"Выделить все"}
                         isDisabled={isEditing}
-                        handle={() => selectAllRows(type)}/>
+                        handle={() => selectAllRows(type)}
+                    />
                 </div>
                 <div className={style.tools}>
-                    <span
-                        className={style.edit}
-                        onClick={() => setEditingTable(type)}
-                        data-disabled={getToolStatus('edit')}/>
+          <span
+              className={style.edit}
+              onClick={() => setEditingTable(type)}
+              data-disabled={getToolStatus("edit")}
+          />
                     <span
                         className={style.delete}
                         onClick={() => deleteRowRT(type)}
-                        data-disabled={getToolStatus('delete')}/>
+                        data-disabled={getToolStatus("delete")}
+                    />
                     <span
                         className={style.add}
                         onClick={() => addNewRowRT(type)}
-                        data-disabled={getToolStatus('add')}/>
+                        data-disabled={getToolStatus("add")}
+                    />
                 </div>
-            </header>
-            <div
-                onScroll={scrollHandler}
-                className={style.body}>
-                {children}</div>
-        </section>
+            </div>
+            <div ref={parentRef} className={style.body}>
+                <div
+                    style={{
+                        height: `${rowVirtualizer.getTotalSize()}px`,
+                        position: 'relative',
+                    }}
+                >
+                    {rowVirtualizer.getVirtualItems().map((virtualRow) => (
+                        <div
+                            key={virtualRow.key}
+                            style={{
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                                width: '100%',
+                                transform: `translateY(${virtualRow.start}px)`,
+                                overflow: "auto",
+                            }}
+                        >
+                            {children[virtualRow.index]}
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
     );
 };

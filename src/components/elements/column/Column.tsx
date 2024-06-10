@@ -1,6 +1,8 @@
-import React, {ReactNode} from 'react';
-import style from './style.module.scss';
+import React, {ReactNode} from "react";
+import style from "./Column.module.scss";
 
 type ColumnProps = { children: ReactNode };
 
-export const Column = ({children}: ColumnProps) => <div className={style.column}>{children}</div>;
+export const Column = ({children}: ColumnProps) => (
+    <div className={style.column}>{children}</div>
+);

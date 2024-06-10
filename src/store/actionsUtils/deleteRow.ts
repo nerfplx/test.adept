@@ -1,7 +1,7 @@
-import {deleteCompany, deleteWorker} from 'store/tables/slice';
+import {deleteCompany, deleteWorker} from "store/tables/slice";
 
-import {tableParts} from 'types/tableParts';
-import {DeleteRowType} from 'types/actions';
+import {tableParts} from "types/tableParts";
+import {DeleteRowType} from "types/actions";
 
 export const deleteRow: DeleteRowType = (props) => {
     const {
@@ -10,7 +10,7 @@ export const deleteRow: DeleteRowType = (props) => {
         selectedCompanyId,
         tablePartsType,
         setSelectedCompanies,
-        setSelectedWorkers
+        setSelectedWorkers,
     } = props;
 
     if (tablePartsType === tableParts.companies) {
@@ -18,6 +18,11 @@ export const deleteRow: DeleteRowType = (props) => {
         dispatch(deleteCompany(selectedCompanyId));
     } else {
         setSelectedWorkers([]);
-        dispatch(deleteWorker({workerId: selectedWorkersId, companyId: selectedCompanyId[0]}));
+        dispatch(
+            deleteWorker({
+                workerId: selectedWorkersId,
+                companyId: selectedCompanyId[0],
+            }),
+        );
     }
 };

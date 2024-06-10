@@ -1,13 +1,13 @@
-import React, {useState} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
-import {Companies, Workers} from './parts';
-import {getAvailableTools, separateCompaniesToTableArrays} from 'utilsData';
-import {selectCompanies, selectLimit} from 'store/selector';
-import {addNewRow, deleteRow, editRow} from 'store/actionsUtils';
-import {tableParts} from 'types/tableParts';
-import {SharedProps, SelectAllRowsType} from 'types/types';
-import {GetAvailableToolsRT} from 'types/utilsTypes';
-import {AddNewRowRT, DeleteRowRT, EditRowRT} from 'types/actions';
+import React, {useState} from "react";
+import {useDispatch, useSelector} from "react-redux";
+import {Companies, Workers} from "./components";
+import {getAvailableTools, separateCompaniesToTableArrays} from "../../utilsData";
+import {selectCompanies, selectLimit} from "store/selector";
+import {addNewRow, deleteRow, editRow} from "store/actionsUtils";
+import {tableParts} from "types/tableParts";
+import {SharedProps, SelectAllRowsType} from "types/types";
+import {GetAvailableToolsRT} from "types/utilsTypes";
+import {AddNewRowRT, DeleteRowRT, EditRowRT} from "types/actions";
 
 export const Tables: React.FC = () => {
     const companies = useSelector(selectCompanies);
@@ -18,7 +18,10 @@ export const Tables: React.FC = () => {
     const [selectedCompanies, setSelectedCompanies] = useState<number[]>([]);
     const [selectedWorkers, setSelectedWorkers] = useState<number[]>([]);
 
-    const {companiesArray, workersArray} = separateCompaniesToTableArrays(companies, selectedCompanies);
+    const {companiesArray, workersArray} = separateCompaniesToTableArrays(
+        companies,
+        selectedCompanies,
+    );
 
     const addNewRowRT: AddNewRowRT = (tablePartsType) =>
         addNewRow({
@@ -26,7 +29,7 @@ export const Tables: React.FC = () => {
             tablePartsType,
             companies,
             selectedCompanyId: selectedCompanies[0],
-            currentWorkersQty: workersArray.length
+            currentWorkersQty: workersArray.length,
         });
 
     const deleteRowRT: DeleteRowRT = (tablePartsType) =>
@@ -36,7 +39,7 @@ export const Tables: React.FC = () => {
             setSelectedCompanies,
             setSelectedWorkers,
             selectedCompanyId: selectedCompanies,
-            selectedWorkersId: selectedWorkers
+            selectedWorkersId: selectedWorkers,
         });
 
     const editRowRT: EditRowRT = (updatedFields) =>
@@ -46,21 +49,30 @@ export const Tables: React.FC = () => {
             setEditingTable,
             tablePartsType: editingTable,
             selectedCompanyId: selectedCompanies[0],
-            selectedWorkerId: selectedWorkers[0]
+            selectedWorkerId: selectedWorkers[0],
         });
 
     const getAvailableToolsRT: GetAvailableToolsRT = (tablePartsType) =>
-        getAvailableTools((tablePartsType === tableParts.workers ? selectedWorkers : selectedCompanies).length);
+        getAvailableTools(
+            (tablePartsType === tableParts.workers
+                    ? selectedWorkers
+                    : selectedCompanies
+            ).length,
+        );
 
     const selectAllRows: SelectAllRowsType = (tablePartsType) => {
         if (tablePartsType === tableParts.workers) {
-            const fullSelected = workersArray.map(worker => worker.id);
-            setSelectedWorkers(fullSelected.length === selectedWorkers.length ? [] : fullSelected);
+            const fullSelected = workersArray.map((worker) => worker.id);
+            setSelectedWorkers(
+                fullSelected.length === selectedWorkers.length ? [] : fullSelected,
+            );
         }
 
         if (tablePartsType === tableParts.companies) {
-            const fullSelected = companiesArray.map(company => company.id);
-            setSelectedCompanies(fullSelected.length === selectedCompanies.length ? [] : fullSelected);
+            const fullSelected = companiesArray.map((company) => company.id);
+            setSelectedCompanies(
+                fullSelected.length === selectedCompanies.length ? [] : fullSelected,
+            );
         }
     };
 
@@ -73,7 +85,7 @@ export const Tables: React.FC = () => {
         selectAllRows,
         setEditingTable,
         getAvailableToolsRT,
-        setSelectedWorkers
+        setSelectedWorkers,
     };
 
     return (
@@ -88,7 +100,7 @@ export const Tables: React.FC = () => {
                 {...sharedProps}
                 workers={workersArray}
                 selectedWorkers={selectedWorkers}
-                setSelectedWorkers={setSelectedWorkers} // Здесь добавлен пропс setSelectedWorkers
+                setSelectedWorkers={setSelectedWorkers}
             />
         </>
     );

@@ -1,10 +1,8 @@
-import React from 'react';
-import {Provider} from 'react-redux';
-
-import {Tables} from 'components/tables ';
-import {Main, Container, Wrapper} from 'components/layout';
-
-import {store} from 'store';
+import React from "react";
+import {Provider} from "react-redux";
+import {Main, Container, Wrapper} from "components/layout";
+import {store} from "store";
+import {Tables} from "../pages/adeptTables";
 
 export const App = () => (
     <Provider store={store}>
